@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./library.js"></script>
+</head>
+<body>
+    <div>
+        <div>
+            <img style="width: 100vw" id="image" width="100" src="" alt="">
+        </div>
+        <button onclick="chooseFile()">打开相册选取照片</button>
+    </div>
+    <div>
+        <div>
+            <img style="width: 100vw" id="image1" width="100" src="" alt="">
+        </div>
+        <button onclick="takePicture()">拍照</button>
+    </div>
+    <div>
+        <div>
+            <video style="width: 100vw" autoplay controls id="video2" src=""></video>
+        </div>
+        <button onclick="chooseFile2()">打开相册选取视频</button>
+    </div>
+    <div>
+        <div>
+            <video style="width: 100vw" autoplay controls id="video" src=""></video>
+        </div>
+        <button onclick="takeVideo()">拍视屏</button>
+    </div>
+    
+    <script>
+        function chooseFile() {
+            MyLibrary.sendEventToClient("contentProvider", 'chooseFile', {
+                type: 'image/*'
+            }, (result) => {
+                console.log(result)
+                var file = result.data.file
+                var fr = new FileReader();
+                fr.onload = function(ele){
+                    document.getElementById('image').src = ele.target.result
+                }
+                fr.readAsDataURL(file);
+                return "success"
+            })
+
+            // MyLibrary.canIUse("camera", 'takePicture', (result) => console.log(result))
+            // MyLibrary.getServiceInfo("camera", 'takePicture', (result) => console.log(result))
+        }
+
+        function chooseFile2() {
+            MyLibrary.sendEventToClient("contentProvider", 'chooseFile', {
+                type: 'video/*'
+            }, (result) => {
+                console.log(result)
+                var file = result.data.file
+                var fr = new FileReader();
+                fr.onload = function(ele){
+                    var el = document.getElementById('video2')
+                    el.src = ele.target.result
+                    el.play()
+                }
+                fr.readAsDataURL(file);
+                return "success"
+            })
+        }
+
+        function takePicture() {
+            MyLibrary.sendEventToClient("camera", 'takePicture', {}, (result) => {
+                console.log(result)
+                var file = result.data.file
+                var fr = new FileReader();
+                fr.onload = function(ele){
+                    var image = document.getElementById('image1')
+                    image.src = ele.target.result
+                }
+                fr.readAsDataURL(file);
+                return "success"
+            })
+        }
+
+        function takeVideo() {
+            MyLibrary.sendEventToClient("camera", 'takeVideo', {}, (result) => {
+                console.log(result)
+                var file = result.data.file
+                var fr = new FileReader();
+                fr.onload = function(ele){
+                    var video = document.getElementById('video')
+                    video.src = ele.target.result
+                    video.play()
+                }
+                fr.readAsDataURL(file);
+                return "success"
+            })
+        }
+    </script>
+</body>
+</html>
